@@ -1,0 +1,148 @@
+88. Merge Sorted Array
+class Solution {
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        int i = m - 1;
+        int j = n - 1;
+        int k = m + n - 1;
+        
+        while (j >= 0) {
+            if (i >= 0 && nums1[i] > nums2[j]) {
+                nums1[k--] = nums1[i--];
+            } else {
+                nums1[k--] = nums2[j--];
+            }
+        }
+    }
+}
+912.
+class Solution {
+    public int[] sortArray(int[] nums) {
+        mergeSort(nums, 0, nums.length - 1);
+        return nums;
+    }
+
+    private void mergeSort(int[] nums, int left, int right) {
+        if (left >= right) return;
+        int mid = left + (right - left) / 2;
+        mergeSort(nums, left, mid);
+        mergeSort(nums, mid + 1, right);
+        merge(nums, left, mid, right);
+    }
+
+    private void merge(int[] nums, int left, int mid, int right) {
+        int[] temp = new int[right - left + 1];
+        int i = left, j = mid + 1, k = 0;
+
+        while (i <= mid && j <= right) {
+            if (nums[i] <= nums[j]) {
+                temp[k++] = nums[i++];
+            } else {
+                temp[k++] = nums[j++];
+            }
+        }
+
+        while (i <= mid) temp[k++] = nums[i++];
+        while (j <= right) temp[k++] = nums[j++];
+
+        System.arraycopy(temp, 0, nums, left, temp.length);
+    }
+}
+215: Kth Largest Element in an Array
+import java.util.Random;
+
+class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        int target = nums.length - k;
+        return quickselect(nums, 0, nums.length - 1, target);
+    }
+
+    private int quickselect(int[] nums, int left, int right, int target) {
+        if (left == right) return nums[left];
+        
+        int pivotIndex = left + new Random().nextInt(right - left + 1);
+        pivotIndex = partition(nums, left, right, pivotIndex);
+        
+        if (pivotIndex == target) {
+            return nums[pivotIndex];
+        } else if (pivotIndex < target) {
+            return quickselect(nums, pivotIndex + 1, right, target);
+        } else {
+            return quickselect(nums, left, pivotIndex - 1, target);
+        }
+    }
+
+    private int partition(int[] nums, int left, int right, int pivotIndex) {
+        int pivotValue = nums[pivotIndex];
+        swap(nums, pivotIndex, right);
+        int storeIndex = left;
+        
+        for (int i = left; i < right; i++) {
+            if (nums[i] < pivotValue) {
+                swap(nums, i, storeIndex);
+                storeIndex++;
+            }
+        }
+        swap(nums, storeIndex, right);
+        return storeIndex;
+    }
+
+    private void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+}
+
+Q4.
+class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        if (nums1.length > nums2.length) {
+            return findMedianSortedArrays(nums2, nums1);
+        }
+        
+        int m = nums1.length;
+        int n = nums2.length;
+        int left = 0, right = m;
+        
+        while (left <= right) {
+            int partitionX = left + (right - left) / 2;
+            int partitionY = (m + n + 1) / 2 - partitionX;
+            
+            int maxLeftX = (partitionX == 0) ? Integer.MIN_VALUE : nums1[partitionX - 1];
+            int minRightX = (partitionX == m) ? Integer.MAX_VALUE : nums1[partitionX];
+            
+            int maxLeftY = (partitionY == 0) ? Integer.MIN_VALUE : nums2[partitionY - 1];
+            int minRightY = (partitionY == n) ? Integer.MAX_VALUE : nums2[partitionY];
+            
+            if (maxLeftX <= minRightY && maxLeftY <= minRightX) {
+                if ((m + n) % 2 == 0) {
+                    return ((double) Math.max(maxLeftX, maxLeftY) + Math.min(minRightX, minRightY)) / 2.0;
+                } else {
+                    return (double) Math.max(maxLeftX, maxLeftY);
+                }
+            } else if (maxLeftX > minRightY) {
+                right = partitionX - 1;
+            } else {
+                left = partitionX + 1;
+            }
+        }
+        
+        return 0.0;
+    }
+}
+53. Maximun Subarray
+class Solution {
+    public int maxSubArray(int[] nums) {
+        int n = nums.length;
+        int max = Integer.MIN_VALUE, sum = 0;
+        
+        for(int i=0;i<n;i++){
+            sum += nums[i];
+            max = Math.max(sum,max);
+            
+            if(sum<0) sum = 0;
+        }
+        
+        return max;
+    }
+}
